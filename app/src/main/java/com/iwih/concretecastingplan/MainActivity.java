@@ -8,6 +8,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,6 +22,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        ArrayList<MouldType> list = new ArrayList<>();
+        list.add(new MouldType((long) 1, "PP-01", (long) 3.20));
+        list.add(new MouldType((long) 2, "PP-02", (long) 1.20));
+        list.add(new MouldType((long) 3, "PP-03", (long) 5.20));
+
+        ((ListView) findViewById(R.id.moulds_list_view)).setAdapter(new DataAdapter(this, list));
     }
 
     @Override
