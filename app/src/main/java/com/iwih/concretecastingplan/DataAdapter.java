@@ -42,13 +42,19 @@ public class DataAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = view;
-        if (rowView == null)
-            rowView = inflater.inflate(R.layout.mould_row, viewGroup, false);
+        MouldRowViewHolder viewHolder = null;
 
-        CheckBox checkBox = (CheckBox) rowView.findViewById(R.id.mould_row_checkbox);
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        if (rowView == null) {
+            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            rowView = inflater.inflate(R.layout.mould_row, viewGroup, false);
+            viewHolder = new MouldRowViewHolder(rowView);
+            rowView.setTag(viewHolder);
+        } else {
+            viewHolder = (MouldRowViewHolder) rowView.getTag();
+        }
+
+        viewHolder.selectionCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 View parentView = (View) compoundButton.getParent();
@@ -66,15 +72,11 @@ public class DataAdapter extends BaseAdapter {
 
         MouldType currentMould = mValues.get(i);
 
-        TextView rowIdTextView = (TextView) rowView.findViewById(R.id.mould_id_for_row);
-        rowIdTextView.setText(String.valueOf(i));
+        viewHolder.mouldIdTextView.setText(String.valueOf(i));
 
-        TextView mouldNameTxtView = (TextView) rowView.findViewById(R.id.mould_name_txt);
-        mouldNameTxtView.setText(currentMould.getMouldName());
+        viewHolder.mouldNameTextView.setText(currentMould.getMouldName());
 
-        TextView mouldSizeTxtView = (TextView) rowView.findViewById(R.id.mould_size_txt);
-        mouldSizeTxtView.setText(String.valueOf(currentMould.getMouldSize()));
-
+        viewHolder.mouldSizeTextView.setText(String.valueOf(currentMould.getMouldSize()));
 
         return rowView;
     }
@@ -87,7 +89,7 @@ public class DataAdapter extends BaseAdapter {
     private void onRowCheckedChanged(View parentView, boolean checked) {
         //get the textview for the id of the row
 
-        TextView rowIdTextView = (TextView) parentView.findViewById(R.id.mould_id_for_row);
+        TextView rowIdTextView = ((MouldRowViewHolder) parentView.getTag()).mouldIdTextView;
 
         String rowIdString = rowIdTextView.getText().toString();
         int rowId = Integer.parseInt(rowIdString);
