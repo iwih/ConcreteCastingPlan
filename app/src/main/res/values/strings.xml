@@ -3,4 +3,6 @@
     <string name="action_settings">Settings</string>
     <string name="mould_name_txtview">MOULD\nNAME</string>
     <string name="mould_size_txtview">MOULD\nSIZE</string>
+    <string name="total_concrete_m3">TOTAL CONCRETE (m3):</string>
+    <string name="selected_moulds">SELECTED MOULDS #:</string>
 </resources>

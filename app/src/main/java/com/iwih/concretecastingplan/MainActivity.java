@@ -1,19 +1,21 @@
 package com.iwih.concretecastingplan;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private ListView mouldsListView = null;
+    private TextView totalConcreteTextView = null;
+    private TextView selectedMouldsCountTextView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,11 +25,12 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ArrayList<MouldType> list = new ArrayList<>();
-        list.add(new MouldType((long) 1, "PP-01", (long) 3.20));
-        list.add(new MouldType((long) 2, "PP-02", (long) 1.20));
-        list.add(new MouldType((long) 3, "PP-03", (long) 5.20));
+        list.add(new MouldType((long) 1, "PP-01", 3.20));
+        list.add(new MouldType((long) 2, "PP-02", 1.20));
+        list.add(new MouldType((long) 3, "PP-03", 5.20));
 
-        ((ListView) findViewById(R.id.moulds_list_view)).setAdapter(new DataAdapter(this, list));
+        mouldsListView = (ListView) findViewById(R.id.moulds_list_view);
+        mouldsListView.setAdapter(new DataAdapter(this, list));
     }
 
     @Override
@@ -50,5 +53,31 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void RefreshConcreteQuantity() {
+        if (mouldsListView == null) return;
+        double totalConcreteQuantity = 0.0;
+        int selectedMouldsCount = 0;
+
+        DataAdapter dataAdapter = (DataAdapter) mouldsListView.getAdapter();
+
+        for (int i = 0; i < dataAdapter.getCount(); i++) {
+            MouldType row = dataAdapter.getItem(i);
+            if (row.isCheckedOnRowView()) {
+                totalConcreteQuantity += row.getMouldSize();
+                selectedMouldsCount++;
+            }
+        }
+
+        String totalConcreteQuantityStr = new DecimalFormat("#.##").format(totalConcreteQuantity);
+
+        if (totalConcreteTextView == null)
+            totalConcreteTextView = (TextView) findViewById(R.id.total_concrete_txtview);
+        if (selectedMouldsCountTextView == null)
+            selectedMouldsCountTextView = (TextView) findViewById(R.id.count_selected_moulds_txtview);
+
+        totalConcreteTextView.setText(totalConcreteQuantityStr);
+        selectedMouldsCountTextView.setText(String.valueOf(selectedMouldsCount));
     }
 }

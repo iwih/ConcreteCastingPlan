@@ -5,11 +5,12 @@ package com.iwih.concretecastingplan;
  */
 
 public class MouldType {
+    private boolean checkedOnRowView;
     private long _id;
     private String mouldName;
-    private long mouldSize;
+    private double mouldSize;
 
-    public MouldType(long _id, String mouldName, long mouldSize) {
+    public MouldType(long _id, String mouldName, double mouldSize) {
         this._id = _id;
         this.mouldName = mouldName;
         this.mouldSize = mouldSize;
@@ -31,11 +32,19 @@ public class MouldType {
         this.mouldName = mouldName;
     }
 
-    public long getMouldSize() {
+    public double getMouldSize() {
         return mouldSize;
     }
 
-    public void setMouldSize(long mouldSize) {
+    public void setMouldSize(double mouldSize) {
         this.mouldSize = mouldSize;
+    }
+
+    public boolean isCheckedOnRowView() {
+        return checkedOnRowView;
+    }
+
+    public void setCheckedOnRowView(boolean checkedOnRowView) {
+        this.checkedOnRowView = checkedOnRowView;
     }
 }
