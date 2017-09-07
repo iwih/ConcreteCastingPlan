@@ -58,16 +58,14 @@ public class DataAdapter extends BaseAdapter {
             rowView.setOnClickListener(null);
         }
 
-        MouldType currentMould = mValues.get(i);
+        assignValuesToRow(i, viewHolder);
 
-        viewHolder.selectionCheckBox.setChecked(currentMould.isCheckedOnRowView());
+        assignEventsHandlers(rowView, viewHolder);
 
-        viewHolder.mouldIdTextView.setText(String.valueOf(i));
+        return rowView;
+    }
 
-        viewHolder.mouldNameTextView.setText(currentMould.getMouldName());
-
-        viewHolder.mouldSizeTextView.setText(String.valueOf(currentMould.getMouldSize()));
-
+    private void assignEventsHandlers(View rowView, MouldRowViewHolder viewHolder) {
         viewHolder.selectionCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -83,8 +81,18 @@ public class DataAdapter extends BaseAdapter {
                 switchCheckBox(view);
             }
         });
+    }
 
-        return rowView;
+    private void assignValuesToRow(int i, MouldRowViewHolder viewHolder) {
+        MouldType currentMould = mValues.get(i);
+
+        viewHolder.selectionCheckBox.setChecked(currentMould.isCheckedOnRowView());
+
+        viewHolder.mouldIdTextView.setText(String.valueOf(i));
+
+        viewHolder.mouldNameTextView.setText(currentMould.getMouldName());
+
+        viewHolder.mouldSizeTextView.setText(String.valueOf(currentMould.getMouldSize()));
     }
 
     private void switchCheckBox(View view) {
