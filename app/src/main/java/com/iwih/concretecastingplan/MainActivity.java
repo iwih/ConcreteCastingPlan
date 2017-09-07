@@ -25,9 +25,10 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ArrayList<MouldType> list = new ArrayList<>();
-        list.add(new MouldType((long) 1, "PP-01", 3.20));
-        list.add(new MouldType((long) 2, "PP-02", 1.20));
-        list.add(new MouldType((long) 3, "PP-03", 5.20));
+        for (int i = 0; i < 30; i++) {
+            MouldType mould = new MouldType(i, "MM" + i, 30 + i);
+            list.add(mould);
+        }
 
         mouldsListView = (ListView) findViewById(R.id.moulds_list_view);
         mouldsListView.setAdapter(new DataAdapter(this, list));

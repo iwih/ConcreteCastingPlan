@@ -1,6 +1,7 @@
 package com.iwih.concretecastingplan;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,8 +53,10 @@ public class DataAdapter extends BaseAdapter {
             rowView.setTag(viewHolder);
         } else {
             viewHolder = (MouldRowViewHolder) rowView.getTag();
+            Log.v("ConcreteCastingPlan", "I've just used a recycled view! WOW!");
         }
 
+        viewHolder.selectionCheckBox.setOnCheckedChangeListener(null);
         viewHolder.selectionCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -62,6 +65,7 @@ public class DataAdapter extends BaseAdapter {
             }
         });
 
+        rowView.setOnClickListener(null);
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,6 +75,8 @@ public class DataAdapter extends BaseAdapter {
         });
 
         MouldType currentMould = mValues.get(i);
+
+        viewHolder.selectionCheckBox.setChecked(currentMould.isCheckedOnRowView());
 
         viewHolder.mouldIdTextView.setText(String.valueOf(i));
 
