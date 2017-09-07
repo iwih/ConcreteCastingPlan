@@ -54,25 +54,9 @@ public class DataAdapter extends BaseAdapter {
         } else {
             viewHolder = (MouldRowViewHolder) rowView.getTag();
             Log.v("ConcreteCastingPlan", "I've just used a recycled view! WOW!");
+            viewHolder.selectionCheckBox.setOnCheckedChangeListener(null);
+            rowView.setOnClickListener(null);
         }
-
-        viewHolder.selectionCheckBox.setOnCheckedChangeListener(null);
-        viewHolder.selectionCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                View parentView = (View) compoundButton.getParent();
-                onRowCheckedChanged(parentView, b);
-            }
-        });
-
-        rowView.setOnClickListener(null);
-        rowView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //assign event listener to the clicks on the row view
-                switchCheckBox(view);
-            }
-        });
 
         MouldType currentMould = mValues.get(i);
 
@@ -83,6 +67,22 @@ public class DataAdapter extends BaseAdapter {
         viewHolder.mouldNameTextView.setText(currentMould.getMouldName());
 
         viewHolder.mouldSizeTextView.setText(String.valueOf(currentMould.getMouldSize()));
+
+        viewHolder.selectionCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                View parentView = (View) compoundButton.getParent();
+                onRowCheckedChanged(parentView, b);
+            }
+        });
+
+        rowView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //assign event listener to the clicks on the row view
+                switchCheckBox(view);
+            }
+        });
 
         return rowView;
     }
