@@ -1,17 +1,30 @@
 package com.iwih.concretecastingplan;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.iwih.concretecastingplan.data.DatabaseMouldsSQLite;
+import com.iwih.concretecastingplan.data.Schema_MouldsTable;
+import com.iwih.concretecastingplan.viewdata.DataAdapter;
+import com.iwih.concretecastingplan.data.MouldType;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static DataAdapter mouldsListDataAdapter;
+    private static DatabaseMouldsSQLite mouldsDatabase;
 
     private ListView mouldsListView = null;
     private TextView totalConcreteTextView = null;
@@ -24,14 +37,52 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ArrayList<MouldType> list = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            MouldType mould = new MouldType(i, "MM" + i, 30 + i);
-            list.add(mould);
+        initializeDatabase();
+
+        initializeDataAdapter();
+
+        refreshConcreteQuantity();
+    }
+
+    private void initializeDataAdapter() {
+        if (mouldsListDataAdapter == null) {
+            ArrayList<MouldType> listMoulds = null;
+            SQLiteDatabase mouldsDb = mouldsDatabase.getReadableDatabase();
+            Cursor mouldsCursor = mouldsDb.query(Schema_MouldsTable.TABLE_NAME, null, null, null, null, null, null);
+
+            int countMoulds = mouldsCursor.getCount();
+            Log.v("ConreteCastingPlan", String.valueOf(countMoulds) + " mould(s) retrieved.");
+            if (countMoulds > 0) {
+                listMoulds = new ArrayList<>();
+                for (int i = 0; i < countMoulds; i++) {
+                    MouldType mould = new MouldType(
+                            mouldsCursor.getLong(mouldsCursor.getColumnIndex(Schema_MouldsTable.ID_COLUMN)),
+                            mouldsCursor.getString(mouldsCursor.getColumnIndex(Schema_MouldsTable.NAME_MOULD_COLUMN)),
+                            mouldsCursor.getDouble(mouldsCursor.getColumnIndex(Schema_MouldsTable.SIZE_MOULD_COLUMN)));
+                    listMoulds.add(mould);
+                }
+            }
+            mouldsCursor.close();
+            if (listMoulds != null)
+                mouldsListDataAdapter = new DataAdapter(this, listMoulds);
+        } else {
+            mouldsListDataAdapter.setContext(this);
         }
 
-        mouldsListView = (ListView) findViewById(R.id.moulds_list_view);
-        mouldsListView.setAdapter(new DataAdapter(this, list));
+        attachDataAdapterToListView();
+    }
+
+    private void attachDataAdapterToListView() {
+        if (mouldsListDataAdapter != null)
+            if (mouldsListDataAdapter.getCount() > 0) {
+                mouldsListView = (ListView) findViewById(R.id.moulds_list_view);
+                mouldsListView.setAdapter(mouldsListDataAdapter);
+            }
+    }
+
+    private void initializeDatabase() {
+        if (mouldsDatabase != null) return;
+        mouldsDatabase = new DatabaseMouldsSQLite(getApplicationContext());
     }
 
     @Override
@@ -49,14 +100,22 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        switch (id) {
+            case R.id.action_edit_moulds:
+
+                break;
+            case R.id.action_exit_app:
+                finish();
+                break;
+        }
+        if (id == R.id.action_edit_moulds) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public void RefreshConcreteQuantity() {
+    public void refreshConcreteQuantity() {
         if (mouldsListView == null) return;
         double totalConcreteQuantity = 0.0;
         int selectedMouldsCount = 0;
@@ -80,5 +139,13 @@ public class MainActivity extends AppCompatActivity {
 
         totalConcreteTextView.setText(totalConcreteQuantityStr);
         selectedMouldsCountTextView.setText(String.valueOf(selectedMouldsCount));
+    }
+
+    public void unselectFAB(View view) {
+
+    }
+
+    public void editMouldsFAB(View view) {
+        Toast.makeText(this, "Just checking the fab button", Toast.LENGTH_SHORT).show();
     }
 }

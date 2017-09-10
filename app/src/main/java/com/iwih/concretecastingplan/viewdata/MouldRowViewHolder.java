@@ -1,8 +1,10 @@
-package com.iwih.concretecastingplan;
+package com.iwih.concretecastingplan.viewdata;
 
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
+import com.iwih.concretecastingplan.R;
 
 /**
  * Created by iwih on 06/09/2017.

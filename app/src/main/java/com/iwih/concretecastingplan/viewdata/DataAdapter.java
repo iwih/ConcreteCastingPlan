@@ -1,4 +1,4 @@
-package com.iwih.concretecastingplan;
+package com.iwih.concretecastingplan.viewdata;
 
 import android.content.Context;
 import android.util.Log;
@@ -9,6 +9,10 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+
+import com.iwih.concretecastingplan.MainActivity;
+import com.iwih.concretecastingplan.R;
+import com.iwih.concretecastingplan.data.MouldType;
 
 import java.util.List;
 
@@ -24,6 +28,10 @@ public class DataAdapter extends BaseAdapter {
     public DataAdapter(Context mContext, List<MouldType> mValues) {
         this.mContext = mContext;
         this.mValues = mValues;
+    }
+
+    public void setContext(Context mContext) {
+        this.mContext = mContext;
     }
 
     @Override
@@ -111,6 +119,6 @@ public class DataAdapter extends BaseAdapter {
         // set the checked value for the corresponding row upto the user choice
         mValues.get(rowId).setCheckedOnRowView(checked);
 
-        ((MainActivity) mContext).RefreshConcreteQuantity();
+        ((MainActivity) mContext).refreshConcreteQuantity();
     }
 }

@@ -5,4 +5,7 @@
     <string name="mould_size_txtview">MOULD\nSIZE</string>
     <string name="total_concrete_m3">TOTAL CONCRETE (m3):</string>
     <string name="selected_moulds">SELECTED MOULDS #:</string>
+    <string name="menu_edit_moulds">Edit Moulds</string>
+    <string name="title_activity_edit_moulds">EditMouldsActivity</string>
+    <string name="exit_app">Exit App</string>
 </resources>
