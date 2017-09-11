@@ -12,10 +12,10 @@ import com.iwih.concretecastingplan.R;
 public class MouldRowViewHolder {
     View mView;
 
-    CheckBox selectionCheckBox;
-    TextView mouldIdTextView;
-    TextView mouldNameTextView;
-    TextView mouldSizeTextView;
+    public CheckBox selectionCheckBox;
+    public TextView mouldIdTextView;
+    public TextView mouldNameTextView;
+    public TextView mouldSizeTextView;
 
     public MouldRowViewHolder(View mView) {
         this.mView = mView;

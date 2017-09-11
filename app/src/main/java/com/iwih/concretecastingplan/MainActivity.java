@@ -1,8 +1,12 @@
 package com.iwih.concretecastingplan;
 
+import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -11,12 +15,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.iwih.concretecastingplan.Utilities.Logger;
 import com.iwih.concretecastingplan.data.DatabaseMouldsSQLite;
 import com.iwih.concretecastingplan.data.Schema_MouldsTable;
 import com.iwih.concretecastingplan.viewdata.DataAdapter;
 import com.iwih.concretecastingplan.data.MouldType;
+import com.iwih.concretecastingplan.viewdata.MouldRowViewHolder;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -26,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private static DataAdapter mouldsListDataAdapter;
     private static DatabaseMouldsSQLite mouldsDatabase;
 
-    private ListView mouldsListView = null;
+    private ListView listViewMoulds = null;
     private TextView totalConcreteTextView = null;
     private TextView selectedMouldsCountTextView = null;
 
@@ -46,23 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initializeDataAdapter() {
         if (mouldsListDataAdapter == null) {
-            ArrayList<MouldType> listMoulds = null;
-            SQLiteDatabase mouldsDb = mouldsDatabase.getReadableDatabase();
-            Cursor mouldsCursor = mouldsDb.query(Schema_MouldsTable.TABLE_NAME, null, null, null, null, null, null);
-
-            int countMoulds = mouldsCursor.getCount();
-            Log.v("ConreteCastingPlan", String.valueOf(countMoulds) + " mould(s) retrieved.");
-            if (countMoulds > 0) {
-                listMoulds = new ArrayList<>();
-                for (int i = 0; i < countMoulds; i++) {
-                    MouldType mould = new MouldType(
-                            mouldsCursor.getLong(mouldsCursor.getColumnIndex(Schema_MouldsTable.ID_COLUMN)),
-                            mouldsCursor.getString(mouldsCursor.getColumnIndex(Schema_MouldsTable.NAME_MOULD_COLUMN)),
-                            mouldsCursor.getDouble(mouldsCursor.getColumnIndex(Schema_MouldsTable.SIZE_MOULD_COLUMN)));
-                    listMoulds.add(mould);
-                }
-            }
-            mouldsCursor.close();
+            ArrayList<MouldType> listMoulds = getMouldTypesFromDb();
             if (listMoulds != null)
                 mouldsListDataAdapter = new DataAdapter(this, listMoulds);
         } else {
@@ -72,11 +61,36 @@ public class MainActivity extends AppCompatActivity {
         attachDataAdapterToListView();
     }
 
+    private ArrayList<MouldType> getMouldTypesFromDb() {
+        ArrayList<MouldType> listMoulds = null;
+        try {
+            SQLiteDatabase mouldsDb = mouldsDatabase.getReadableDatabase();
+            Cursor cursorMoulds = mouldsDb.query(Schema_MouldsTable.TABLE_NAME, null, null, null, null, null, null);
+
+            int countMoulds = cursorMoulds.getCount();
+            Logger.v(String.valueOf(countMoulds) + " mould(s) retrieved.");
+            if (countMoulds > 0) {
+                listMoulds = new ArrayList<>();
+                while (cursorMoulds.moveToNext()) {
+                    MouldType mould = new MouldType(
+                            cursorMoulds.getLong(cursorMoulds.getColumnIndex(Schema_MouldsTable.ID_COLUMN)),
+                            cursorMoulds.getString(cursorMoulds.getColumnIndex(Schema_MouldsTable.NAME_MOULD_COLUMN)),
+                            cursorMoulds.getDouble(cursorMoulds.getColumnIndex(Schema_MouldsTable.SIZE_MOULD_COLUMN)));
+                    listMoulds.add(mould);
+                }
+            }
+            cursorMoulds.close();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return listMoulds;
+    }
+
     private void attachDataAdapterToListView() {
         if (mouldsListDataAdapter != null)
             if (mouldsListDataAdapter.getCount() > 0) {
-                mouldsListView = (ListView) findViewById(R.id.moulds_list_view);
-                mouldsListView.setAdapter(mouldsListDataAdapter);
+                listViewMoulds = (ListView) findViewById(R.id.moulds_list_view);
+                listViewMoulds.setAdapter(mouldsListDataAdapter);
             }
     }
 
@@ -116,11 +130,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void refreshConcreteQuantity() {
-        if (mouldsListView == null) return;
+        if (listViewMoulds == null || !isRefreshingConcreteQuantity) return;
+        Logger.v("Refreshing concrete quantity display!");
         double totalConcreteQuantity = 0.0;
         int selectedMouldsCount = 0;
 
-        DataAdapter dataAdapter = (DataAdapter) mouldsListView.getAdapter();
+        DataAdapter dataAdapter = (DataAdapter) listViewMoulds.getAdapter();
 
         for (int i = 0; i < dataAdapter.getCount(); i++) {
             MouldType row = dataAdapter.getItem(i);
@@ -141,11 +156,54 @@ public class MainActivity extends AppCompatActivity {
         selectedMouldsCountTextView.setText(String.valueOf(selectedMouldsCount));
     }
 
-    public void unselectFAB(View view) {
+    public void unselectFAB(View view) throws InterruptedException {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
 
+        alertDialog.setTitle("Confirm Opt");
+        alertDialog.setMessage("Are you sure to un-select all the moulds?!");
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //insertDumpMouldsIntoDb();
+                unselectAllMoulds();
+            }
+        });
+        alertDialog.setNegativeButton("Cancel", null);
+        alertDialog.create().show();
     }
 
-    public void editMouldsFAB(View view) {
-        Toast.makeText(this, "Just checking the fab button", Toast.LENGTH_SHORT).show();
+    private boolean isRefreshingConcreteQuantity = true;
+
+    private void unselectAllMoulds() {
+        int countMoulds = listViewMoulds.getCount();
+        if (countMoulds <= 0) return;
+        try {
+            isRefreshingConcreteQuantity = false;
+
+            for (int i = 0; i < countMoulds; i++) {
+                MouldRowViewHolder currentViewMould = (MouldRowViewHolder)
+                        listViewMoulds.getAdapter().getView(i, listViewMoulds.getChildAt(i), listViewMoulds).getTag();
+                currentViewMould.selectionCheckBox.setChecked(false);
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        } finally {
+            isRefreshingConcreteQuantity = true;
+            refreshConcreteQuantity();
+        }
+    }
+
+    private void insertDumpMouldsIntoDb() {
+        int countMoulds = 30;
+        SQLiteDatabase mouldsSQLite = mouldsDatabase.getReadableDatabase();
+        for (int i = 0; i < countMoulds; i++) {
+            MouldType mould = new MouldType(i, "MM" + i, countMoulds + i);
+            ContentValues contentRowMould = new ContentValues();
+            contentRowMould.put(Schema_MouldsTable.NAME_MOULD_COLUMN, mould.getMouldName());
+            contentRowMould.put(Schema_MouldsTable.SIZE_MOULD_COLUMN, mould.getMouldSize());
+            long insertedId = mouldsSQLite.insert(Schema_MouldsTable.TABLE_NAME, null, contentRowMould);
+            Log.v("ConcreteCastingPlan", String.valueOf(insertedId) + " insertion result..");
+        }
+        mouldsSQLite.close();
     }
 }
