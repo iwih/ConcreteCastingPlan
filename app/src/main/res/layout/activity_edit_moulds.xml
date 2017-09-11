@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.iwih.concretecastingplan.EditMouldsActivity">
 
+
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/edit_mould_appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -20,4 +24,46 @@
 
     </android.support.design.widget.AppBarLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+    <ListView
+        android:id="@+id/list_view_edit_moulds"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/edit_mould_bottom_button_bar"
+        android:layout_below="@+id/edit_mould_appbar_layout">
+
+    </ListView>
+
+    <android.support.v7.widget.ButtonBarLayout
+        android:id="@+id/edit_mould_bottom_button_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#000000">
+
+        <Button
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginTop="1dp"
+            android:layout_weight="1"
+            android:background="@color/button_normal"
+            android:text="@string/add_mould"
+            android:id="@+id/edit_moulds_add_new"/>
+
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginTop="1dp"
+            android:layout_weight="1"
+            android:background="@color/button_normal"
+            android:text="@string/remove_selected"
+            android:id="@+id/edit_moulds_remove_selected" />
+    </android.support.v7.widget.ButtonBarLayout>
+
+
+</RelativeLayout>

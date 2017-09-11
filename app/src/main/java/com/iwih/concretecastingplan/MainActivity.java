@@ -2,6 +2,7 @@ package com.iwih.concretecastingplan;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -116,17 +117,19 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         switch (id) {
             case R.id.action_edit_moulds:
-
+                startEditMouldsActivity();
                 break;
             case R.id.action_exit_app:
                 finish();
                 break;
         }
-        if (id == R.id.action_edit_moulds) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startEditMouldsActivity() {
+        Intent intent = new Intent(this, EditMouldsActivity.class);
+        startActivity(intent);
     }
 
     public void refreshConcreteQuantity() {

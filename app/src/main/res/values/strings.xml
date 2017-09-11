@@ -8,4 +8,6 @@
     <string name="menu_edit_moulds">Edit Moulds</string>
     <string name="title_activity_edit_moulds">EditMouldsActivity</string>
     <string name="exit_app">Exit App</string>
+    <string name="add_mould">Add Mould</string>
+    <string name="remove_selected">Remove Selected</string>
 </resources>
