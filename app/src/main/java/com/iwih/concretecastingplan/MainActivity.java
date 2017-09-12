@@ -29,8 +29,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static DataAdapter mouldsListDataAdapter;
-    private static DatabaseMouldsSQLite mouldsDatabase;
+    private static DataAdapter listAdapterMoulds;
+    private static DatabaseMouldsSQLite databaseMoulds;
 
     private ListView listViewMoulds = null;
     private TextView totalConcreteTextView = null;
@@ -51,12 +51,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeDataAdapter() {
-        if (mouldsListDataAdapter == null) {
+        if (listAdapterMoulds == null) {
             ArrayList<MouldType> listMoulds = getMouldTypesFromDb();
             if (listMoulds != null)
-                mouldsListDataAdapter = new DataAdapter(this, listMoulds);
+                listAdapterMoulds = new DataAdapter(this, listMoulds);
         } else {
-            mouldsListDataAdapter.setContext(this);
+            listAdapterMoulds.setContext(this);
         }
 
         attachDataAdapterToListView();
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<MouldType> getMouldTypesFromDb() {
         ArrayList<MouldType> listMoulds = null;
         try {
-            SQLiteDatabase mouldsDb = mouldsDatabase.getReadableDatabase();
+            SQLiteDatabase mouldsDb = databaseMoulds.getReadableDatabase();
             Cursor cursorMoulds = mouldsDb.query(Schema_MouldsTable.TABLE_NAME, null, null, null, null, null, null);
 
             int countMoulds = cursorMoulds.getCount();
@@ -88,16 +88,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void attachDataAdapterToListView() {
-        if (mouldsListDataAdapter != null)
-            if (mouldsListDataAdapter.getCount() > 0) {
+        if (listAdapterMoulds != null)
+            if (listAdapterMoulds.getCount() > 0) {
                 listViewMoulds = (ListView) findViewById(R.id.moulds_list_view);
-                listViewMoulds.setAdapter(mouldsListDataAdapter);
+                listViewMoulds.setAdapter(listAdapterMoulds);
             }
     }
 
     private void initializeDatabase() {
-        if (mouldsDatabase != null) return;
-        mouldsDatabase = new DatabaseMouldsSQLite(getApplicationContext());
+        if (databaseMoulds != null) return;
+        databaseMoulds = new DatabaseMouldsSQLite(getApplicationContext());
     }
 
     @Override
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void insertDumpMouldsIntoDb() {
         int countMoulds = 30;
-        SQLiteDatabase mouldsSQLite = mouldsDatabase.getReadableDatabase();
+        SQLiteDatabase mouldsSQLite = databaseMoulds.getReadableDatabase();
         for (int i = 0; i < countMoulds; i++) {
             MouldType mould = new MouldType(i, "MM" + i, countMoulds + i);
             ContentValues contentRowMould = new ContentValues();
