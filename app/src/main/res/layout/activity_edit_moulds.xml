@@ -47,7 +47,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="1dp"
             android:layout_weight="1"
-            android:background="@color/button_normal"
+            android:background="@drawable/edit_moulds_bottom_btn"
             android:text="@string/add_mould"
             android:id="@+id/edit_moulds_add_new"/>
 
@@ -61,7 +61,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="1dp"
             android:layout_weight="1"
-            android:background="@color/button_normal"
+            android:background="@drawable/edit_moulds_bottom_btn"
             android:text="@string/remove_selected"
             android:id="@+id/edit_moulds_remove_selected" />
     </android.support.v7.widget.ButtonBarLayout>
